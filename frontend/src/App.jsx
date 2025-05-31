@@ -14,6 +14,9 @@ import ProtectedRoute from "./contexts/ProtectedRoute";
 import ErrorPage from "./pages/ErrorPage";
 import RegistrationForm from "./pages/auth/RegistrationForm";
 import InstructorLayout from "./layouts/InstructorLayout";
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import InstructorCourses from "./pages/instructor/InstructorCourses";
+import InstructorQuizes from "./pages/instructor/InstructorQuizes";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -24,10 +27,26 @@ export default function App() {
     },
     {
       path: "/instructor",
-      element: <ProtectedRoute>
-        <InstructorLayout/>
-      </ProtectedRoute>,
+      element: (
+        <ProtectedRoute>
+          <InstructorLayout />
+        </ProtectedRoute>
+      ),
       errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/instructor",
+          element: <InstructorDashboard />,
+        },
+        {
+          path: "courses",
+          element: <InstructorCourses />,
+        },
+        {
+          path: "quizes",
+          element: <InstructorQuizes />,
+        },
+      ],
     },
     {
       path: "/auth",
