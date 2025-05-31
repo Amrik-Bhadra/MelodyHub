@@ -6,6 +6,8 @@ const cookieparser = require('cookie-parser');
 
 // import routes
 const authenRoutes = require('./routes/authentication.routes');
+const coursesRoutes = require('./routes/courses.routes');
+const lessonRoutes = require('./routes/lessons.routes.js')
 
 // import database config file
 const connectDB = require('./config/db');
@@ -32,6 +34,8 @@ connectDB();
 
 // routes
 app.use('/api/auth', authenRoutes);
+app.use('/api/courses', coursesRoutes);
+app.use('/api/lessons', lessonRoutes);
 
 
 //listen to server

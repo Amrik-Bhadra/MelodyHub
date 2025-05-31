@@ -1,4 +1,3 @@
-// models/Lesson.js
 const mongoose = require('mongoose');
 
 const lessonSchema = new mongoose.Schema({
@@ -10,10 +9,6 @@ const lessonSchema = new mongoose.Schema({
   description: {
     type: String
   },
-  videoUrl: {
-    type: String, // Cloud storage URL or path
-    required: true
-  },
   duration: {
     type: Number, // in minutes
     required: true
@@ -23,7 +18,7 @@ const lessonSchema = new mongoose.Schema({
     fileUrl: String // PDF, image, audio, etc.
   }],
   order: {
-    type: Number, // sequence in the course
+    type: Number,
     required: true
   },
   course: {
@@ -33,7 +28,7 @@ const lessonSchema = new mongoose.Schema({
   },
   quiz: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Quiz', // optional, if quiz exists for the lesson
+    ref: 'Quiz', 
     default: null
   },
   createdAt: {

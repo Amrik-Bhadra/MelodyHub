@@ -4,7 +4,6 @@ import InputFieldComponent from "../../components/form_components/InputFieldComp
 import PasswordFieldComponent from "../../components/form_components/PasswordFieldComponent";
 import FormBtn from "../../components/form_components/FormBtn";
 import { MdEmail } from "react-icons/md";
-import { FcGoogle } from "react-icons/fc";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { FaUserLock } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
