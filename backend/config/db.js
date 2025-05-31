@@ -9,6 +9,8 @@ function connectDB(){
     }).catch((err)=>{
         console.error(`Mongodb connection error: ${err}`);
     })
+
+    // mongoose.set('bufferCommands', false);
 }
 
 module.exports = connectDB;

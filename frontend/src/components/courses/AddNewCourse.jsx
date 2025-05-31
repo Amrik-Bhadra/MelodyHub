@@ -10,7 +10,10 @@ const categoryOpt = [
   { value: "Folk & Traditional Music", label: "Folk & Traditional Music" },
   { value: "Popular Music", label: "Popular Music" },
   { value: "Instrumental Music", label: "Instrumental Music" },
-  { value: "Religious & Spiritual Music", label: "Religious & Spiritual Music" },
+  {
+    value: "Religious & Spiritual Music",
+    label: "Religious & Spiritual Music",
+  },
   { value: "Film & Theatre Music", label: "Film & Theatre Music" },
 ];
 
@@ -24,14 +27,12 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
   const authString = localStorage.getItem("auth");
   const auth = authString ? JSON.parse(authString) : null;
 
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    level: "",
-    price: "",
-    duration: ""
-  });
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [level, setLevel] = useState("");
+  const [price, setPrice] = useState("");
+  const [duration, setDuration] = useState("");
 
   const axiosInstance = useAxios();
 
@@ -39,20 +40,15 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
     fetchCourses();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
   const validateFields = () => {
-    const { title, description, category, level, price, duration } = formData;
-
     if (!title.trim()) return "Title is required.";
     if (!description.trim()) return "Description is required.";
     if (!category) return "Please select a category.";
     if (!level) return "Please select a difficulty level.";
-    if (!price || isNaN(price) || Number(price) < 0) return "Enter a valid price.";
-    if (!duration || isNaN(duration) || Number(duration) <= 0) return "Enter a valid duration.";
+    if (!price || isNaN(price) || Number(price) < 0)
+      return "Enter a valid price.";
+    if (!duration || isNaN(duration) || Number(duration) <= 0)
+      return "Enter a valid duration.";
 
     return null;
   };
@@ -67,11 +63,15 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
 
     try {
       const instructorEmail = auth?.user?.email;
+      console.log("Instructor email: ", instructorEmail);
       const response = await axiosInstance.post("/api/courses/create", {
-        ...formData,
-        price: Number(formData.price),
-        duration: Number(formData.duration),
-        instructorEmail
+        title,
+        description,
+        category,
+        level,
+        price: Number(price),
+        duration: Number(duration),
+        instructorEmail,
       });
 
       if (response.status === 200) {
@@ -103,8 +103,8 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
             type="text"
             name="title"
             placeholder="Enter Title"
-            value={formData.title}
-            onChange={handleChange}
+            value={title}
+            onChange={setTitle}
             required
           />
 
@@ -113,8 +113,8 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
             type="text"
             name="description"
             placeholder="Enter Description"
-            value={formData.description}
-            onChange={handleChange}
+            value={description}
+            onChange={setDescription}
             required
           />
 
@@ -123,8 +123,8 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
               label="Category"
               name="category"
               options={categoryOpt}
-              selectedValue={formData.category}
-              onChange={handleChange}
+              selectedValue={category}
+              onChange={setCategory}
               required
               placeholder="Choose a Category"
             />
@@ -133,8 +133,8 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
               label="Difficulty Level"
               name="level"
               options={levelOpt}
-              selectedValue={formData.level}
-              onChange={handleChange}
+              selectedValue={level}
+              onChange={setLevel}
               required
               placeholder="Choose Level"
             />
@@ -146,8 +146,8 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
               type="number"
               name="price"
               placeholder="Enter Price"
-              value={formData.price}
-              onChange={handleChange}
+              value={price}
+              onChange={setPrice}
               required
             />
 
@@ -156,8 +156,8 @@ const AddNewCourse = ({ onClose, fetchCourses }) => {
               type="number"
               name="duration"
               placeholder="Enter Duration"
-              value={formData.duration}
-              onChange={handleChange}
+              value={duration}
+              onChange={setDuration}
               required
             />
           </div>

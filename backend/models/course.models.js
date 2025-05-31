@@ -13,7 +13,7 @@ const courseSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Vocal', 'Instrumental', 'Theory', 'Production', 'Other'],
+    enum: ['Classical Music', 'Folk & Traditional Music', 'Popular Music', 'Instrumental Music', 'Religious & Spiritual Music', 'Film & Theatre Music'],
     required: true
   },
   level: {

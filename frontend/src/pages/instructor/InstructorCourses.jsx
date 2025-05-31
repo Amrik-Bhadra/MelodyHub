@@ -60,11 +60,12 @@ const InstructorCourses = () => {
   const fetchCourses = async () => {
     try {
       const email = auth.user.email;
-      const response = await axiosInstance(`/api/courses/instructor`, {
-        email,
+      const response = await axiosInstance.get(`/api/courses/instructor`, {
+        params: { email },
       });
+
       if (response.status === 200) {
-        setCourses(response.data);
+        setCourses(response.data.courses);
       } else {
         setCourses([]);
       }
@@ -121,60 +122,60 @@ const InstructorCourses = () => {
         {courses.length > 0 && (
           <>
             {courses.map((course) => (
-            <div
-              key={course._id}
-              className="bg-white border border-gray-200 rounded-lg shadow-md p-4 flex flex-col justify-between"
-            >
-              <div>
-                <h3 className="text-lg font-bold text-gray-800">
-                  {course.title}
-                </h3>
-                <p className="text-sm text-gray-600 mt-2">
-                  {course.description}
-                </p>
+              <div
+                key={course._id}
+                className="bg-white border border-gray-200 rounded-lg shadow-md p-4 flex flex-col justify-between"
+              >
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">
+                    {course.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {course.description}
+                  </p>
 
-                <div className="mt-2 text-sm text-gray-700">
-                  <strong>Category:</strong> {course.category}
+                  <div className="mt-2 text-sm text-gray-700">
+                    <strong>Category:</strong> {course.category}
+                  </div>
+
+                  <div className="mt-1 text-sm text-gray-700">
+                    <strong>Level:</strong> {course.level}
+                  </div>
+
+                  <div className="mt-1 text-sm text-gray-700">
+                    <strong>Duration:</strong> {course.duration} minutes
+                  </div>
+
+                  <p className="text-sm font-medium mt-4 text-blue-600">
+                    ₹{course.price}
+                  </p>
+
+                  <span
+                    className={`inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full ${
+                      course.isPublished
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {course.isPublished ? "Published" : "Draft"}
+                  </span>
                 </div>
 
-                <div className="mt-1 text-sm text-gray-700">
-                  <strong>Level:</strong> {course.level}
+                <div className="mt-4 flex gap-2">
+                  <button
+                    className="flex-1 bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-md"
+                    onClick={() => handleEditCourse(course._id)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md"
+                    onClick={() => confirmDeleteCourse(course._id)}
+                  >
+                    Delete
+                  </button>
                 </div>
-
-                <div className="mt-1 text-sm text-gray-700">
-                  <strong>Duration:</strong> {course.duration} minutes
-                </div>
-
-                <p className="text-sm font-medium mt-4 text-blue-600">
-                  ₹{course.price}
-                </p>
-
-                <span
-                  className={`inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full ${
-                    course.isPublished
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {course.isPublished ? "Published" : "Draft"}
-                </span>
               </div>
-
-              <div className="mt-4 flex gap-2">
-                <button
-                  className="flex-1 bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-md"
-                  onClick={() => handleEditCourse(course._id)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md"
-                  onClick={() => confirmDeleteCourse(course._id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
             ))}
           </>
         )}

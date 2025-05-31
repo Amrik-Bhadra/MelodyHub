@@ -7,21 +7,21 @@ const Quiz = require('../models/quiz.models.js');
 
 
 // get all courses
-const getAllCourses = async(req, res)=>{
+const getAllCourses = async (req, res) => {
 
 }
 
 // get all courses created by instructor
-const getAllCoursesByInstructor = async(req, res) => {
-    const { instructorId } = req.params;
-
+const getAllCoursesByInstructor = async (req, res) => {
+  const { email } = req.params;
+  console.log(`Instructor email: ${email}`);
   try {
-    const instructor = await User.findById(instructorId);
+    const instructor = await User.findOne({ email: email });
     if (!instructor || instructor.role !== 'instructor') {
       return res.status(404).json({ message: 'Instructor not found or not valid' });
     }
 
-    const courses = await Course.find({ instructor: instructorId }).populate('instructor', 'name email');
+    const courses = await Course.find({ instructor: instructor._id }).populate('instructor', 'name email');
 
     res.status(200).json({
       success: true,
@@ -48,13 +48,14 @@ const createCourse = async (req, res) => {
       instructorEmail, 
     } = req.body;
 
+    console.log(req.body);
+
     // Basic validation
     if (!title || !description || !category || !price || !duration || !instructorEmail) {
       return res.status(400).json({ message: 'All required fields must be filled' });
     }
 
-    const instructorUser = await User.findOne({email: instructorEmail});
-    console.log(`Instructor id: ${instructorUser._id}`);
+    const instructorUser = await User.findOne({ email: instructorEmail });
     if (!instructorUser || instructorUser.role !== 'instructor') {
       return res.status(400).json({ message: 'Invalid instructor ID' });
     }
@@ -67,7 +68,7 @@ const createCourse = async (req, res) => {
       level: level || 'Beginner',
       price,
       duration,
-      instructor
+      instructor: instructorUser._id, // ✅ Fixed
     });
 
     const savedCourse = await newCourse.save();
@@ -87,6 +88,7 @@ const createCourse = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 
 // Delete course
@@ -159,11 +161,11 @@ const updateCourse = async (req, res) => {
   }
 };
 
-module.exports={
-    getAllCourses,
-    getAllCoursesByInstructor,
-    createCourse,
-    deleteCourse,
-    updateCourse,
-    deleteCourse
+module.exports = {
+  getAllCourses,
+  getAllCoursesByInstructor,
+  createCourse,
+  deleteCourse,
+  updateCourse,
+  deleteCourse
 }
