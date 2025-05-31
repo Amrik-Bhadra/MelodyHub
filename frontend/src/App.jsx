@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import AuthLayout from "./layouts/AuthLayout";
 import LoginForm from "./pages/auth/LoginForm";
@@ -6,8 +10,10 @@ import VerifyOTP from "./pages/auth/VerifyOTP";
 import ForgetPassword from "./pages/auth/ForgetPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 
+import ProtectedRoute from "./contexts/ProtectedRoute";
 import ErrorPage from "./pages/ErrorPage";
-
+import RegistrationForm from "./pages/auth/RegistrationForm";
+import InstructorLayout from "./layouts/InstructorLayout";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -17,9 +23,20 @@ export default function App() {
       errorElement: <ErrorPage />,
     },
     {
+      path: "/instructor",
+      element: <ProtectedRoute>
+        <InstructorLayout/>
+      </ProtectedRoute>,
+      errorElement: <ErrorPage />,
+    },
+    {
       path: "/auth",
       element: <AuthLayout />,
       children: [
+        {
+          path: "register",
+          element: <RegistrationForm />,
+        },
         {
           path: "login",
           element: <LoginForm />,
@@ -30,15 +47,15 @@ export default function App() {
         },
         {
           path: "forgotpassword",
-          element: <ForgetPassword/>
+          element: <ForgetPassword />,
         },
         {
           path: "resetpassword",
-          element: <ResetPassword/>
-        }
+          element: <ResetPassword />,
+        },
       ],
     },
-  ])
+  ]);
   return (
     <>
       <Toaster position="top-center" />

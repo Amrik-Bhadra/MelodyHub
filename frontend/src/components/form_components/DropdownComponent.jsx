@@ -15,7 +15,7 @@ const DropdownComponent = ({
   );
 
   return (
-    <div className="flex flex-col gap-2 w-1/2">
+    <div className="flex flex-col gap-2 w-full">
       {label && (
         <label className="text-sm font-medium text-primary-text">
           {label} {required && <span className="text-red-500">*</span>}
@@ -30,7 +30,7 @@ const DropdownComponent = ({
           required={required}
           className={`
             w-full border rounded-md p-2 bg-white text-sm text-gray-700
-            focus:ring-primary focus:border-primary outline-none transition-all
+            focus:ring-sky focus:border-sky outline-none transition-all
           `}
         >
           <option value="" disabled>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { adminSidebarItems as sidebarItems } from "../utils/resource/dataProvider";
+import { instructorSidebarItems as sidebarItems } from "../utils/resource/dataProvider";
 import {
   MdChevronLeft,
   MdChevronRight,
@@ -16,8 +16,9 @@ import {
 import { FaStore } from "react-icons/fa";
 import useAxios from "../utils/validator/useAxios";
 import toast from "react-hot-toast";
+import logo from "../assets/logo.png"
 
-const AdminLayout = () => {
+const InstructorLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -83,9 +84,9 @@ const AdminLayout = () => {
         ${collapsed && !isMobile ? "justify-center" : ""}
       `}
     >
-      <FaStore className="text-2xl text-sky shrink-0" />
+      <img src={logo} alt="logo" className="h-10 text-sky shrink-0" />
       {(!collapsed || isMobile) && (
-        <span className="font-bold text-xl text-gray-800">SalaryFlow</span>
+        <span className="font-bold text-xl text-gray-800">MelodyHub</span>
       )}
     </Link>
   );
@@ -308,7 +309,7 @@ const AdminLayout = () => {
                   Privacy Policy
                 </Link>
               </div>
-              <p className="text-xs text-gray-400">© 2024 Saarthi</p>
+              <p className="text-xs text-gray-400">© 2025 MelodyHub</p>
             </>
           ) : (
             <div className="text-center">
@@ -397,6 +398,6 @@ const AdminLayout = () => {
       </div>
     </div>
   );
-};
+}
 
-export default AdminLayout;
+export default InstructorLayout

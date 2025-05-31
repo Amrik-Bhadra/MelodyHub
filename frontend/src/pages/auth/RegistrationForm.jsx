@@ -4,41 +4,65 @@ import InputFieldComponent from "../../components/form_components/InputFieldComp
 import PasswordFieldComponent from "../../components/form_components/PasswordFieldComponent";
 import FormBtn from "../../components/form_components/FormBtn";
 import { MdEmail } from "react-icons/md";
-import { FcGoogle } from "react-icons/fc";
+import { IoPerson } from "react-icons/io5";
 import { RiLockPasswordFill } from "react-icons/ri";
-import { FaUserLock } from "react-icons/fa6";
+import { HiUserAdd } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import useAxios from "../../utils/validator/useAxios";
+import DropdownComponent from "../../components/form_components/DropdownComponent";
 
-const LoginForm = () => {
+const RegistrationForm = () => {
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const axiosInstance = useAxios();
 
+  const roleOptions = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'student', label: 'Student' },
+    { value: 'instructor', label: 'Instructor' },
+  ];
+
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      toast.error(
-        email ? "Password field not filled!" : "Password field not filled"
-      );
-      return;
+    if(!name){
+        toast.error("Name field not filled!");
+        return;
+    }
+
+    if(!email){
+        toast.error("Email field not filled!");
+        return;
+    }
+
+    if(!role){
+        toast.error("Role field not filled!");
+        return;
+    }
+
+    if(!password){
+        toast.error("Password field not filled!");
+        return;
     }
 
     try {
-      const response = await axiosInstance.post(
-        "/api/auth/login",
-        { email, password },
-      );
+      const response = await axiosInstance.post("/api/auth/register", {
+        name,
+        email,
+        role,
+        password,
+      });
 
       if (response.status === 200) {
         toast.success(response?.data.message);
-        navigate("/auth/verifyotp");
+        navigate("/auth/login");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed! Try again.");
+      toast.error(error.response?.data?.message || "Registration failed! Try again.");
     }
   };
 
@@ -52,14 +76,25 @@ const LoginForm = () => {
       <div className="w-full max-w-md bg-white rounded-lg p-6 flex flex-col gap-8">
         <header className="flex flex-col items-center gap-1">
           <div className="h-10 w-10 border border-[#e0e0e0] text-primary-txt rounded-lg flex items-center justify-center mb-5 ">
-            <FaUserLock className="h-5 w-5" />
+            <HiUserAdd className="h-5 w-5" />
           </div>
-          <h1 className="text-2xl font-semibold mb-2">Hi, Welcome Back</h1>
+          <h1 className="text-2xl font-semibold mb-2">Welcome to MelodyHub</h1>
           <p className="text-center text-sm font-light text-secondary-txt">
-            Enter your credentials to access your account
+            Join our family, to begin your musical journey
           </p>
         </header>
-        <form className="flex flex-col gap-5" onSubmit={handleLogin}>
+        <form className="flex flex-col gap-5" onSubmit={handleRegister}>
+          <InputFieldComponent
+            label="Name"
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Enter your Name"
+            icon={IoPerson}
+            value={name}
+            onChange={setName}
+            required={true}
+          />
           <InputFieldComponent
             label="Email"
             type="email"
@@ -70,6 +105,16 @@ const LoginForm = () => {
             value={email}
             onChange={setEmail}
             required={true}
+          />
+
+          <DropdownComponent
+            label="Select Your Role"
+            name="role"
+            options={roleOptions}
+            selectedValue={role}
+            onChange={setRole}
+            required={true}
+            placeholder="Choose a role"
           />
 
           <PasswordFieldComponent
@@ -83,37 +128,12 @@ const LoginForm = () => {
             required={true}
           />
 
-          <div className="flex justify-between items-center gap-3">
-            {/* Remember Me Checkbox */}
-            <label className="flex items-center text-sm text-primary-txt cursor-pointer">
-              <input
-                type="checkbox"
-                className="mr-2 accent-primary-btn cursor-pointer"
-                id="rememberMe"
-              />
-              Remember Me
-            </label>
-
-            {/* Forgot Password Link */}
-            <div>
-              <Link
-                to="/auth/forgotpassword"
-                className="w-full text-sm text-link font-semibold "
-              >
-                Forgot Password?
-              </Link>
-            </div>
-          </div>
-
-          <FormBtn btnText="Login" type="submit" />
+          <FormBtn btnText="Register" type="submit" />
 
           <p className="text-sm text-center text-primary-txt font-light">
-            Don't have an account?{" "}
-            <Link
-              to="/auth/register"
-              className="text-link font-medium"
-            >
-              Register
+            Already have an account?{" "}
+            <Link to="/auth/login" className="text-link font-medium">
+              Login
             </Link>
           </p>
         </form>
@@ -122,4 +142,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegistrationForm;
