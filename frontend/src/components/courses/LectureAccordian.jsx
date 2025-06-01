@@ -8,7 +8,15 @@ import doc from "../../assets/doc.png";
 import video from "../../assets/video.png";
 import quiz from "../../assets/quiz.png";
 
-const LectureAccordian = ({ lesson, setLessons, index, setSelectedLesson, onAdd }) => {
+const LectureAccordian = ({
+  lesson,
+  setLessons,
+  index,
+  setSelectedLesson,
+  onAdd,
+  setSelectedResource,
+  setDeleteResourceModal,
+}) => {
   const getIcon = (type) => {
     if (type === "pdf") return pdf;
     else if (type === "doc") return doc;
@@ -56,7 +64,14 @@ const LectureAccordian = ({ lesson, setLessons, index, setSelectedLesson, onAdd 
                   </div>
 
                   <div className="flex items-center gap-x-3 text-xl text-[#464646] ">
-                    <MdDelete className="hover:text-sky"/>
+                    <MdDelete
+                      className="hover:text-sky"
+                      onClick={() => {
+                        setSelectedLesson(lesson._id);
+                        setDeleteResourceModal(true);
+                        setSelectedResource(res);
+                      }}
+                    />
                     <AiOutlineEdit className="hover:text-sky" />
                   </div>
                 </li>

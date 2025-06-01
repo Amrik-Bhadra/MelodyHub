@@ -76,8 +76,51 @@ const addResource = async (req, res) => {
   }
 };
 
+const deleteResource = async (req, res) => {
+  try {
+    const { lessonId, resourceId } = req.params;
+    const instructorId = req.body.instructorId;
+
+    console.log(`Lessonid: ${lessonId}, resource id: ${resourceId}, instructor id: ${instructorId}`);
+
+    const lesson = await Lesson.findById(lessonId).populate('course');
+    if (!lesson) {
+      return res.status(404).json({ message: 'Lesson not found' });
+    }
+
+    // Check if the requesting instructor owns the course
+    if (lesson.course.instructor.toString() !== instructorId.toString()) {
+      return res.status(403).json({ message: 'Unauthorized: not the course instructor' });
+    }
+
+    // Find index of resource
+    const resourceIndex = lesson.resources.findIndex(
+      (res) => res._id.toString() === resourceId.toString()
+    );
+
+    if (resourceIndex === -1) {
+      return res.status(404).json({ message: 'Resource not found in lesson' });
+    }
+
+    // Remove the resource
+    lesson.resources.splice(resourceIndex, 1);
+
+    await lesson.save();
+
+    res.status(200).json({
+      message: 'Resource deleted successfully',
+      lesson,
+    });
+  } catch (error) {
+    console.error('Error deleting resource:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 
 module.exports = {
     createLesson,
-    addResource
+    addResource,
+    deleteResource
 }

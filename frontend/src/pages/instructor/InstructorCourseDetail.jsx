@@ -9,9 +9,15 @@ import LectureAccordian from "../../components/courses/LectureAccordian";
 import nodata from "../../assets/nodata.svg";
 import AddNewLesson from "../../components/courses/AddNewLesson";
 import AddNewResource from "../../components/courses/AddNewResource";
+import DeleteResourceModal from "../../components/courses/DeleteResourceModal";
 
 const InstructorCourseDetail = () => {
   const { id } = useParams();
+
+  const authString = localStorage.getItem("auth");
+  const auth = authString ? JSON.parse(authString) : null;
+  const instructorId = auth.user._id;
+
   const axiosInstance = useAxios();
   const navigate = useNavigate();
   const [course, setCourse] = useState({});
@@ -50,6 +56,8 @@ const InstructorCourseDetail = () => {
   const [isAddNewLesson, setIsAddNewLesson] = useState(false);
   const [isAddNewResource, setIsAddNewResource] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState("");
+  const [selectedResource, setSelectedResource] = useState("");
+  const [isDeleteResourceModal, setDeleteResourceModal] = useState(false);
 
   const getDuration = (duration) => {
     const decimal = duration / 60 - Math.floor(duration / 60);
@@ -72,6 +80,26 @@ const InstructorCourseDetail = () => {
       }
     } catch (err) {
       console.log(`Error: ${err}`);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      console.log(`Instructor id: ${instructorId}`);
+      const response = await axiosInstance.delete(
+        `/api/lessons/${selectedLesson}/resource/${selectedResource._id}`,
+        { data: { instructorId } }
+      );
+
+      if (response.status == 200) {
+        toast.success("Resource Deleted!");
+        setDeleteResourceModal(false);
+        fetchCourseData();
+      } else {
+        toast.error("Failed to delete Resource");
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -160,6 +188,8 @@ const InstructorCourseDetail = () => {
                 index={index}
                 setSelectedLesson={setSelectedLesson}
                 onAdd={() => setIsAddNewResource(true)}
+                setSelectedResource={setSelectedResource}
+                setDeleteResourceModal={setDeleteResourceModal}
               />
             ))}
           </div>
@@ -180,6 +210,16 @@ const InstructorCourseDetail = () => {
           lessonId={selectedLesson}
           onClose={() => setIsAddNewResource(false)}
           fetchCourseData={fetchCourseData}
+        />
+      )}
+
+      {isDeleteResourceModal && (
+        <DeleteResourceModal
+          onClose={() => {
+            setDeleteResourceModal(false);
+          }}
+          onConfirm={handleDelete}
+          resourceName={selectedResource.name}
         />
       )}
     </div>
