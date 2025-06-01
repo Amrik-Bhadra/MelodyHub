@@ -1,12 +1,13 @@
-const DeleteCourseModal = ({ onClose, onConfirm }) => {
+import { IoWarningOutline } from "react-icons/io5";
+const DeleteCourseModal = ({ onClose, onConfirm, courseName }) => {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
         <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-          <h2 className="text-lg font-semibold text-red-600 mb-4">
-            Confirm Deletion
+          <h2 className="text-lg font-semibold text-red-600 mb-4 flex items-center gap-x-2">
+            <IoWarningOutline className="text-red-600 text-2xl"/> <p>Confirm Deletion</p>
           </h2>
           <p className="text-sm text-gray-700 mb-6">
-            Are you sure you want to delete this Project? This action cannot be undone.
+            Are you sure you want to delete <span className="font-bold">{courseName}</span> Course? This action cannot be undone.
           </p>
           <div className="flex justify-end space-x-3">
             <button

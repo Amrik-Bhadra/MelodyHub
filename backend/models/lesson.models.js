@@ -10,12 +10,16 @@ const lessonSchema = new mongoose.Schema({
     type: String
   },
   duration: {
-    type: Number, // in minutes
-    required: true
+    type: Number,
   },
   resources: [{
     name: String,
-    fileUrl: String // PDF, image, audio, etc.
+    type: { type: String, enum: ['pdf', 'video', 'doc', 'quiz'] },
+    fileUrl: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
   }],
   order: {
     type: Number,
@@ -28,7 +32,7 @@ const lessonSchema = new mongoose.Schema({
   },
   quiz: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Quiz', 
+    ref: 'Quiz',
     default: null
   },
   createdAt: {

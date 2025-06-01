@@ -6,6 +6,30 @@ const Certificate = require('../models/certificate.models.js');
 const Quiz = require('../models/quiz.models.js');
 
 
+const getCourseDetails = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const lessons = await Promise.all(
+      course.lessons.map((lessonId) => Lesson.findById(lessonId))
+    );
+
+    res.status(200).json({
+      course,
+      lessons,
+    });
+  } catch (err) {
+    console.error('Error fetching course details:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+
 // get all courses
 const getAllCourses = async (req, res) => {
 
@@ -13,10 +37,9 @@ const getAllCourses = async (req, res) => {
 
 // get all courses created by instructor
 const getAllCoursesByInstructor = async (req, res) => {
-  const { email } = req.params;
-  console.log(`Instructor email: ${email}`);
+  const { id } = req.params;
   try {
-    const instructor = await User.findOne({ email: email });
+    const instructor = await User.findById(id);
     if (!instructor || instructor.role !== 'instructor') {
       return res.status(404).json({ message: 'Instructor not found or not valid' });
     }
@@ -45,7 +68,7 @@ const createCourse = async (req, res) => {
       level,
       price,
       duration,
-      instructorEmail, 
+      instructorEmail,
     } = req.body;
 
     console.log(req.body);
@@ -73,11 +96,14 @@ const createCourse = async (req, res) => {
 
     const savedCourse = await newCourse.save();
 
+
     // Add course to instructor's teachingCourses list
     instructorUser.teachingCourses.push(savedCourse._id);
+    console.log('after saved');
     await instructorUser.save();
+    console.log('after saved2');
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: 'Course created successfully',
       course: savedCourse
@@ -90,12 +116,13 @@ const createCourse = async (req, res) => {
 };
 
 
-
 // Delete course
 const deleteCourse = async (req, res) => {
   try {
     const courseId = req.params.courseId;
-    const instructorId = req.user._id; // assuming auth middleware sets this
+    const instructorId = req.params.instructorId;
+
+    console.log(`delete course: ${courseId} & email: ${instructorId}`);
 
     const course = await Course.findById(courseId);
 
@@ -137,8 +164,22 @@ const deleteCourse = async (req, res) => {
 const updateCourse = async (req, res) => {
   try {
     const courseId = req.params.courseId;
-    const instructorId = req.body.instructor_id;
-    const updates = req.body;
+    const instructorId = req.body.id;
+    const { title,
+      description,
+      category,
+      level,
+      price,
+      duration } = req.body;
+
+    const updates = {
+      title,
+      description,
+      category,
+      level,
+      price,
+      duration
+    }
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: 'Course not found' });
@@ -162,6 +203,7 @@ const updateCourse = async (req, res) => {
 };
 
 module.exports = {
+  getCourseDetails,
   getAllCourses,
   getAllCoursesByInstructor,
   createCourse,

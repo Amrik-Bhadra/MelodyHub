@@ -17,6 +17,7 @@ import InstructorLayout from "./layouts/InstructorLayout";
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import InstructorCourses from "./pages/instructor/InstructorCourses";
 import InstructorQuizes from "./pages/instructor/InstructorQuizes";
+import InstructorCourseDetail from "./pages/instructor/InstructorCourseDetail";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -41,6 +42,10 @@ export default function App() {
         {
           path: "courses",
           element: <InstructorCourses />,
+        },
+        {
+          path: "courses/:id",
+          element: <InstructorCourseDetail/>
         },
         {
           path: "quizes",

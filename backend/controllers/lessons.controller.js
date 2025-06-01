@@ -1,17 +1,15 @@
 // controllers/lessonController.js
-const Lesson = require('../models/Lesson');
-const Course = require('../models/Course');
-const User = require('../models/User');
+const Lesson = require('../models/lesson.models');
+const Course = require('../models/course.models');
+const User = require('../models/user.models');
 
 const createLesson = async (req, res) => {
     try {
-        const instructorId = req.body.instructor_id
+        const courseId = req.params.courseId;
+        const instructorId = req.body.instructorId
         const {
             title,
-            description,
-            duration,
-            order,
-            course: courseId,
+            order
         } = req.body;
 
         const course = await Course.findById(courseId);
@@ -28,8 +26,6 @@ const createLesson = async (req, res) => {
 
         const newLesson = await Lesson.create({
             title,
-            description,
-            duration,
             order,
             course: courseId,
         });
@@ -40,7 +36,6 @@ const createLesson = async (req, res) => {
 
         res.status(201).json({
             message: 'Lesson created successfully',
-            lesson: newLesson,
         });
 
     } catch (error) {
@@ -49,30 +44,30 @@ const createLesson = async (req, res) => {
     }
 };
 
-const addLessonResources = async (req, res) => {
+const addResource = async (req, res) => {
   try {
     const { lessonId } = req.params;
-    const { instructor_id, resources, quiz } = req.body;
+    const { instructorId, title, type } = req.body;
+
+    console.log(`Lesson id: ${lessonId}, title: ${title}, type: ${type}`);
 
     const lesson = await Lesson.findById(lessonId).populate('course');
     if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
 
-    if (lesson.course.instructor.toString() !== instructor_id.toString()) {
+    if (lesson.course.instructor.toString() !== instructorId.toString()) {
       return res.status(403).json({ message: 'Unauthorized: not the course instructor' });
     }
 
-    if (resources && Array.isArray(resources)) {
-      lesson.resources.push(...resources);
-    }
-
-    if (quiz) {
-      lesson.quiz = quiz;
-    }
+    // Add the resource
+    lesson.resources.push({
+      name: title,
+      type: type,
+    });
 
     await lesson.save();
 
     res.status(200).json({
-      message: 'Resources added to lesson successfully',
+      message: 'Resource added to lesson successfully',
       lesson,
     });
   } catch (error) {
@@ -81,7 +76,8 @@ const addLessonResources = async (req, res) => {
   }
 };
 
+
 module.exports = {
     createLesson,
-    addLessonResources
+    addResource
 }
